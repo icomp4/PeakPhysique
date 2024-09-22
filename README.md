@@ -6,5 +6,5 @@
 1. Create a development branch: git branch <DEV_BRANCH>
 2. Checkout development branch: git checkout <DEV_BRANCH>
 3. Create commit using the template: git commit
-4. Create a Pull Request: gh pr create -a "@me" --base "master"
+4. Create a Pull Request: gh pr create -a "@me" --base "main"
 
