@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.peakphysique.app.ui.theme.PeakPhysiqueTheme
 import com.peakphysique.app.view.LoginScreen
+import com.peakphysique.app.view.RegisterScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,7 +21,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
                     // Not sure if this is the best way to handle showing the register screen on start
-                    LoginScreen(modifier = Modifier.padding(innerPadding))
+                    RegisterScreen(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
