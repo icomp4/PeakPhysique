@@ -4,13 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.Color
+import com.peakphysique.app.controller.Navigation
 import com.peakphysique.app.ui.theme.PeakPhysiqueTheme
 import com.peakphysique.app.view.RegisterScreen
 
@@ -19,14 +21,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            PeakPhysiqueTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-
-                    // Not sure if this is the best way to handle showing the register screen on start
-                    RegisterScreen(modifier = Modifier.padding(innerPadding))
+            PeakPhysiqueTheme() {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize().background(
+                    Color(0xFFE0E0E0)
+                )) {
+                    Navigation()
                 }
             }
         }
     }
 }
-

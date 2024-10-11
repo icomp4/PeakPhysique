@@ -23,10 +23,12 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.peakphysique.app.ui.theme.Buttons
 
     @Composable
-    fun LoginScreen(modifier: Modifier = Modifier){
+    fun LoginScreen(navController: NavController, modifier: Modifier = Modifier){
         var username by remember { mutableStateOf("") }
         var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
@@ -92,7 +94,7 @@ import com.peakphysique.app.ui.theme.Buttons
                     color = Color.Blue,
                     textDecoration = TextDecoration.Underline,
                     modifier = Modifier
-                        .clickable(onClick = { /* Handle register */ })
+                        .clickable(onClick = { navController.navigate("register_screen") })
                         .padding(start = 4.dp),
                 )
             }
