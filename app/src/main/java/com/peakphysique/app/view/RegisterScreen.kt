@@ -29,11 +29,13 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.peakphysique.app.model.User
 import com.peakphysique.app.ui.theme.Buttons
 
 @Composable
-fun RegisterScreen(modifier: Modifier = Modifier) {
+fun RegisterScreen(navController: NavController, modifier: Modifier = Modifier) {
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -84,7 +86,6 @@ fun RegisterScreen(modifier: Modifier = Modifier) {
         Button(
             onClick = {
                 var newUser = User(username, email, password)
-
                 // Perform validation
 
                 // Call controller to handle registration
@@ -111,7 +112,7 @@ fun RegisterScreen(modifier: Modifier = Modifier) {
                 color = Color.Blue,
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier
-                    .clickable(onClick = { /* Handle login */ })
+                    .clickable(onClick = { navController.navigate("login_screen") })
                     .padding(start = 4.dp),
             )
         }
