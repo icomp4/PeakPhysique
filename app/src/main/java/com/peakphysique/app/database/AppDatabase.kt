@@ -4,12 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.peakphysique.app.controller.UserController
+import com.peakphysique.app.database.dao.UserDAO
 import com.peakphysique.app.model.User
 
 @Database(entities = [User::class], version = 1, exportSchema = true)
 abstract class AppDatabase: RoomDatabase() {
-    abstract fun userController(): UserController
+    abstract fun userController(): UserDAO
     companion object {
         private var INSTANCE: AppDatabase? = null
         fun getDatabase(context: Context): AppDatabase {
