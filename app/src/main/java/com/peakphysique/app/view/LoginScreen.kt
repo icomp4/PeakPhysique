@@ -69,8 +69,8 @@ import com.peakphysique.app.ui.theme.Buttons
 
             Button(
                 onClick = {
-
-                    // Perform validation
+                    // TODO: Implement validation, and database check
+                    navController.navigate("feed_screen")
 
                 },
                 modifier = Modifier

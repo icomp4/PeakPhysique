@@ -17,20 +17,18 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
-sealed class Routes {
-    data object Track
-    data object History
-    data object Feed
-    data object Account
+sealed class Routes(val route: String) {
+    data object Track : Routes("tracking_screen")
+    data object History : Routes("history_screen")
+    data object Feed : Routes("feed_screen")
+    data object Account : Routes("account_screen")
 }
 
-enum class AppScreen(val route: Any, val title: String, val icon: ImageVector) {
-
-    // TODO: Make sure to add the correct routes
-    HOME(Routes.Track, "Track", Icons.Filled.Home),
-    HISTORY(Routes.History, "History", Icons.Filled.DateRange),
-    FEED(Routes.Feed, "Feed", Icons.Filled.Share),
-    ACCOUNT(Routes.Account, "Account", Icons.Filled.AccountCircle)
+enum class AppScreen(val route: String, val title: String, val icon: ImageVector) {
+    HOME(Routes.Track.route, "Track", Icons.Filled.Home),
+    HISTORY(Routes.History.route, "History", Icons.Filled.DateRange),
+    FEED(Routes.Feed.route, "Feed", Icons.Filled.Share),
+    ACCOUNT(Routes.Account.route, "Account", Icons.Filled.AccountCircle)
 }
 
 @Composable
@@ -45,14 +43,20 @@ fun BottomNavBar(navController: NavController) {
         NavigationBar(
             containerColor = Color(0xFF213455)
         ) {
-            AppScreen.values().forEach { item ->
+            AppScreen.entries.forEach { item ->
                 NavigationBarItem(
                     selected = currentRoute?.endsWith(item.route.toString()) == true,
-                    onClick = { // TODO: add navigation logic
+                    onClick = { navController.navigate(item.route.toString())
                     },
-                    icon = { Icon(item.icon, contentDescription = item.title, tint = Color.White) },
-                    label = { Text(text = item.title, color = Color.White) },
-                    alwaysShowLabel = true
+                    icon = { Icon(item.icon, contentDescription = item.title) },
+                    label = { Text(text = item.title) },
+                    alwaysShowLabel = true,
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = Color(0xFF101E36),
+                        selectedTextColor = Color(0xFFFFFFFF),
+                        unselectedIconColor = Color.White,
+                        unselectedTextColor = Color.White
+                    )
                 )
             }
         }
