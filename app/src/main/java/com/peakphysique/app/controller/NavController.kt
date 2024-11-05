@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.peakphysique.app.view.LoginScreen
 import com.peakphysique.app.view.RegisterScreen
+import com.peakphysique.app.view.TrackingScreen
 
 @Composable
 fun Navigation(){
@@ -18,6 +19,9 @@ fun Navigation(){
 
         composable("register_screen"){
             RegisterScreen(navController)
+        }
+        composable("tracking_screen"){
+            TrackingScreen(navController)
         }
     }
 }
