@@ -58,10 +58,11 @@ fun HistoryScreen(navController: NavController) {
         CalendarView(
             year = selectedYear.value,
             month = selectedMonth.value,
-            workoutDates = listOf(), // Replace with your workout dates
-            onDateClick = { day ->
-                selectedDay.value = day // Update selected day when a date is clicked
-            }
+            workoutDates = listOf(currentDate.dayOfMonth), // Replace with your workout dates
+            selectedDay = selectedDay.value,
+            onDateClick = { day -> selectedDay.value = day // Update selected day when a date is clicked
+             },
+
         )
     }
 }
@@ -80,6 +81,7 @@ fun CalendarView(
     year: Int,
     month: Int,
     workoutDates: List<Int>,  // List of days with workouts
+    selectedDay: Int,
     onDateClick: (Int) -> Unit // Callback for date selection
 ) {
     val daysInMonth = YearMonth.of(year, month).lengthOfMonth()
@@ -99,6 +101,7 @@ fun CalendarView(
                     DayCell(
                         day = day,
                         isWorkoutDay = day in workoutDates,
+                        isSelected = day == selectedDay,
                         onClick = { onDateClick(day) }
                     )
                 }
@@ -107,15 +110,19 @@ fun CalendarView(
     }
 }
 @Composable
-fun DayCell(day: Int, isWorkoutDay: Boolean, onClick: () -> Unit) {
+fun DayCell(day: Int, isWorkoutDay: Boolean, isSelected: Boolean, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .size(40.dp)
             .clickable(onClick = onClick)
-            .background(if (isWorkoutDay) Color.Black else Color.Gray),
+            .background(when {
+                isSelected -> Color(0xFF003D6E) // Navy blue for selected date
+                isWorkoutDay -> Color(0xFF969696)      // Black for workout days
+                else -> Color.Transparent        // Transparent for empty days
+            }),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = day.toString(), color = Color.White)
+        Text(text = day.toString(), color = Color.Black)
     }
 }
 /*@Composable
