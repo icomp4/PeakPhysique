@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.peakphysique.app.controller.BottomNavBar
 import java.time.LocalDate
 import java.time.Month
 import java.time.YearMonth
@@ -127,6 +128,7 @@ fun HistoryScreen(navController: NavController) {
             }
         }
     }
+    BottomNavBar(navController)
 }
 
 @Composable
