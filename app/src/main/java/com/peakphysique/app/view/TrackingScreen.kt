@@ -31,12 +31,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextButton
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import com.peakphysique.app.controller.BottomNavBar
 import java.util.UUID
 
@@ -60,19 +63,28 @@ fun TrackingScreen(navController: NavHostController) {
     var reps by remember { mutableStateOf("") }
     var weight by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
+    val maxNoteLength = 300
 
     // State for delete confirmation
     var showDeleteConfirmation by remember { mutableStateOf(false) }
     var setToDelete by remember { mutableStateOf<Set?>(null) }
 
+    // Validation state
+    val isValidInput = remember(exerciseType, reps, weight) {
+        exerciseType != "Select Exercise" &&
+                reps.isNotBlank() && reps.toDoubleOrNull() != null &&
+                weight.isNotBlank() && weight.toDoubleOrNull() != null
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Dropdown for Exercise Type
+        Spacer(modifier = Modifier.height(32.dp))
+
         Box {
             Text(
                 text = exerciseType,
@@ -100,60 +112,72 @@ fun TrackingScreen(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // TextField for Reps
         TextField(
             value = reps,
             onValueChange = { reps = it },
             label = { Text("Reps") },
-            modifier = Modifier.fillMaxWidth()
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.fillMaxWidth(),
+            isError = reps.isNotBlank() && reps.toDoubleOrNull() == null
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // TextField for Weight
         TextField(
             value = weight,
             onValueChange = { weight = it },
             label = { Text("Weight") },
-            modifier = Modifier.fillMaxWidth()
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.fillMaxWidth(),
+            isError = weight.isNotBlank() && weight.toDoubleOrNull() == null
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // TextField for Notes
-        TextField(
-            value = notes,
-            onValueChange = { notes = it },
-            label = { Text("Notes") },
-            modifier = Modifier.fillMaxWidth()
-        )
+        Column(modifier = Modifier.fillMaxWidth()) {
+            TextField(
+                value = notes,
+                onValueChange = {
+                    if (it.length <= maxNoteLength) {
+                        notes = it
+                    }
+                },
+                label = { Text("Notes") },
+                modifier = Modifier.fillMaxWidth(),
+                supportingText = {
+                    Text(
+                        text = "${notes.length}/$maxNoteLength",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.End,
+                    )
+                }
+            )
+        }
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Button to Add Set
         Button(
             onClick = {
                 val exercise = Set(
-                    id = UUID.randomUUID().toString(), // Generate unique ID
+                    id = UUID.randomUUID().toString(),
                     name = exerciseType,
                     reps = reps,
                     weight = weight,
                     notes = notes
                 )
                 cardList = cardList + exercise
-                // Clear input fields after adding
                 reps = ""
                 weight = ""
                 notes = ""
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = isValidInput
         ) {
             Text("Add Set")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Display cards in a scrollable list
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -176,15 +200,15 @@ fun TrackingScreen(navController: NavHostController) {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Set details
                         Column(modifier = Modifier.weight(1f)) {
                             Text("Exercise: ${set.name}")
                             Text("Reps: ${set.reps}")
                             Text("Weight: ${set.weight}")
-                            Text("Notes: ${set.notes}")
+                            if (set.notes.isNotBlank()) {
+                                Text("Notes: ${set.notes}")
+                            }
                         }
 
-                        // Delete button
                         IconButton(
                             onClick = {
                                 setToDelete = set
@@ -203,7 +227,6 @@ fun TrackingScreen(navController: NavHostController) {
         }
     }
 
-    // Delete Confirmation Dialog
     if (showDeleteConfirmation && setToDelete != null) {
         AlertDialog(
             onDismissRequest = {
@@ -240,7 +263,7 @@ fun TrackingScreen(navController: NavHostController) {
 }
 
 data class Set(
-    val id: String, // for identifying each set
+    val id: String,
     val name: String,
     val reps: String,
     val weight: String,
