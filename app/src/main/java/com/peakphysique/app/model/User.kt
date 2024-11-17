@@ -13,7 +13,11 @@ import androidx.room.PrimaryKey
 data class User(
     @ColumnInfo(name = "username") val username: String,
     @ColumnInfo(name = "email") val email: String,
-    @ColumnInfo(name = "password") val password: String
+    @ColumnInfo(name = "password") val password: String,
+    @ColumnInfo(name = "height") val height: Int,
+    @ColumnInfo(name = "weight") val weight: Int,
+    @ColumnInfo(name = "age") val age: Int,
+    @ColumnInfo(name = "created_at") val createdAt: Long
 ) {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
