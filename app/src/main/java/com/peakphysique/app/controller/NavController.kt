@@ -4,8 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.peakphysique.app.view.AccountScreen
 import com.peakphysique.app.view.FeedScreen
 import com.peakphysique.app.view.LoginScreen
+import com.peakphysique.app.view.ProgressScreen
 import com.peakphysique.app.view.RegisterScreen
 import com.peakphysique.app.view.TrackingScreen
 
@@ -26,6 +28,12 @@ fun Navigation(){
         }
         composable("feed_screen"){
             FeedScreen(navController)
+        }
+        composable("account_screen"){
+            AccountScreen(navController)
+        }
+        composable("progress_screen"){
+            ProgressScreen(navController)
         }
     }
 }
