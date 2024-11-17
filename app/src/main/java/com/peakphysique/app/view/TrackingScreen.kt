@@ -35,34 +35,37 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import com.peakphysique.app.controller.BottomNavBar
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 /*
 
-    TODO: Add a start/end workout button
     TODO: Add the workout to database
-
 
  */
 @Composable
 fun TrackingScreen(navController: NavHostController) {
-    // State for exercise dropdown
+    // Existing state
     var exerciseType by remember { mutableStateOf("Select Exercise") }
-    val exerciseOptions = listOf("Squat", "Bench Press", "Deadlift") // Example options
+    val exerciseOptions = listOf("Squat", "Bench Press", "Deadlift")
     var expanded by remember { mutableStateOf(false) }
     var cardList by remember { mutableStateOf(listOf<Set>()) }
-
-    // State for input fields
     var reps by remember { mutableStateOf("") }
     var weight by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
     val maxNoteLength = 300
+
+    // New state for workout completion
+    var showWorkoutCompleteDialog by remember { mutableStateOf(false) }
 
     // State for delete confirmation
     var showDeleteConfirmation by remember { mutableStateOf(false) }
@@ -82,9 +85,10 @@ fun TrackingScreen(navController: NavHostController) {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(32.dp)) // Add spacing at the top
 
         Box {
+            // Display and handle dropdown menu for selecting exercise type
             Text(
                 text = exerciseType,
                 modifier = Modifier
@@ -109,8 +113,9 @@ fun TrackingScreen(navController: NavHostController) {
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp)) // Space between dropdown and input fields
 
+        // Input field for reps with validation for numeric input
         TextField(
             value = reps,
             onValueChange = { reps = it },
@@ -120,8 +125,9 @@ fun TrackingScreen(navController: NavHostController) {
             isError = reps.isNotBlank() && reps.toDoubleOrNull() == null
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp)) // Space between input fields
 
+        // Input field for weight with validation for numeric input
         TextField(
             value = weight,
             onValueChange = { weight = it },
@@ -131,9 +137,10 @@ fun TrackingScreen(navController: NavHostController) {
             isError = weight.isNotBlank() && weight.toDoubleOrNull() == null
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp)) // Space between input fields
 
         Column(modifier = Modifier.fillMaxWidth()) {
+            // Input field for notes with character limit
             TextField(
                 value = notes,
                 onValueChange = {
@@ -153,8 +160,9 @@ fun TrackingScreen(navController: NavHostController) {
             )
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(32.dp)) // Space before action buttons
 
+        // Button to add a new set to the workout
         Button(
             onClick = {
                 val exercise = Set(
@@ -175,8 +183,24 @@ fun TrackingScreen(navController: NavHostController) {
             Text("Add Set")
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp)) // Space between buttons
 
+        if (cardList.isNotEmpty()) {
+            // Button to complete the workout
+            Button(
+                onClick = { showWorkoutCompleteDialog = true },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary
+                )
+            ) {
+                Text("Complete Workout")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp)) // Space before the list of sets
+        }
+
+        // Display the list of sets using LazyColumn
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -200,6 +224,7 @@ fun TrackingScreen(navController: NavHostController) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
+                            // Display set details
                             Text("Exercise: ${set.name}")
                             Text("Reps: ${set.reps}")
                             Text("Weight: ${set.weight}")
@@ -208,6 +233,7 @@ fun TrackingScreen(navController: NavHostController) {
                             }
                         }
 
+                        // Button to delete a specific set
                         IconButton(
                             onClick = {
                                 setToDelete = set
@@ -226,6 +252,49 @@ fun TrackingScreen(navController: NavHostController) {
         }
     }
 
+// Dialog to confirm workout completion
+    if (showWorkoutCompleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showWorkoutCompleteDialog = false },
+            title = { Text("Complete Workout") },
+            text = {
+                Column {
+                    Text("Are you sure you want to complete this workout?")
+                    Text(
+                        "Date: ${LocalDateTime.now().format(DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm"))}",
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                    Text(
+                        "Total Sets: ${cardList.size}",
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        // Save the workout details and reset state
+                        val workout = Workout(
+                            id = UUID.randomUUID().toString(),
+                            date = LocalDateTime.now(),
+                            sets = cardList
+                        )
+                        println("Workout completed: $workout")
+                        cardList = listOf()
+                        showWorkoutCompleteDialog = false
+                    }
+                ) {
+                    Text("Complete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showWorkoutCompleteDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
+// Dialog to confirm set deletion
     if (showDeleteConfirmation && setToDelete != null) {
         AlertDialog(
             onDismissRequest = {
@@ -258,13 +327,22 @@ fun TrackingScreen(navController: NavHostController) {
         )
     }
 
+// Bottom navigation bar
     BottomNavBar(navController)
 }
 
+// Data class for each set
 data class Set(
     val id: String,
     val name: String,
     val reps: String,
     val weight: String,
     val notes: String
+)
+
+// Data class for the complete workout
+data class Workout(
+    val id: String,
+    val date: LocalDateTime,
+    val sets: List<Set>
 )
