@@ -47,8 +47,7 @@ import java.util.UUID
 
     TODO: Add a start/end workout button
     TODO: Add the workout to database
-    TODO: Fix bug allowing user to submit an exercise as "Select Exercise"
-    TODO: Fix bug allowing user to submit blank exercises
+
 
  */
 @Composable
