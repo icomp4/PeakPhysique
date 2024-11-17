@@ -33,10 +33,13 @@ import androidx.navigation.NavHostController
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.TextButton
 import com.peakphysique.app.controller.BottomNavBar
 import java.util.UUID
+
 /*
 
     TODO: Add a start/end workout button
@@ -58,6 +61,10 @@ fun TrackingScreen(navController: NavHostController) {
     var weight by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
 
+    // State for delete confirmation
+    var showDeleteConfirmation by remember { mutableStateOf(false) }
+    var setToDelete by remember { mutableStateOf<Set?>(null) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -72,7 +79,6 @@ fun TrackingScreen(navController: NavHostController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { expanded = !expanded }
-                    .padding(16.dp)
                     .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
                     .padding(16.dp)
             )
@@ -86,7 +92,7 @@ fun TrackingScreen(navController: NavHostController) {
                             exerciseType = option
                             expanded = false
                         },
-                        text = { Text(option) },
+                        text = { Text(option) }
                     )
                 }
             }
@@ -157,11 +163,11 @@ fun TrackingScreen(navController: NavHostController) {
         ) {
             items(
                 items = cardList,
-                key = { it.id } // Use unique ID as key
+                key = { it.id }
             ) { set ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
+                    shape = RoundedCornerShape(8.dp)
                 ) {
                     Row(
                         modifier = Modifier
@@ -181,7 +187,8 @@ fun TrackingScreen(navController: NavHostController) {
                         // Delete button
                         IconButton(
                             onClick = {
-                                cardList = cardList.filterNot { it.id == set.id } // Filter by ID
+                                setToDelete = set
+                                showDeleteConfirmation = true
                             }
                         ) {
                             Icon(
@@ -195,11 +202,45 @@ fun TrackingScreen(navController: NavHostController) {
             }
         }
     }
+
+    // Delete Confirmation Dialog
+    if (showDeleteConfirmation && setToDelete != null) {
+        AlertDialog(
+            onDismissRequest = {
+                showDeleteConfirmation = false
+                setToDelete = null
+            },
+            title = { Text("Delete Set") },
+            text = { Text("Are you sure you want to delete this set? This action cannot be undone.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        cardList = cardList.filterNot { it.id == setToDelete?.id }
+                        showDeleteConfirmation = false
+                        setToDelete = null
+                    }
+                ) {
+                    Text("Delete", color = Color.Red)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteConfirmation = false
+                        setToDelete = null
+                    }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
     BottomNavBar(navController)
 }
 
 data class Set(
-    val id: String, // for idetifying each set
+    val id: String, // for identifying each set
     val name: String,
     val reps: String,
     val weight: String,
