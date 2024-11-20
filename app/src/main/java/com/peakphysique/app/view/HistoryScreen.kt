@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -76,14 +77,22 @@ fun HistoryScreen(navController: NavController) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Button(onClick = {
-                if (selectedMonth.value == 1) {
-                    selectedMonth.value = 12
-                    selectedYear.value -= 1
-                } else {
-                    selectedMonth.value -= 1
-                }
-            }) {
+            Button(
+                onClick = {
+                    if (selectedMonth.value == 1) {
+                        selectedMonth.value = 12
+                        selectedYear.value -= 1
+                    } else {
+                        selectedMonth.value -= 1
+                    }
+                    selectedDay.value = 0
+                    workouts.value = listOf()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF213455),
+                    contentColor = Color.White
+                )
+            ) {
                 Text("<")
             }
 
@@ -91,17 +100,26 @@ fun HistoryScreen(navController: NavController) {
                 text = "${Month.of(selectedMonth.value).name.lowercase().capitalize()} - ${selectedYear.value}",
             )
 
-            Button(onClick = {
-                if (selectedMonth.value == 12) {
-                    selectedMonth.value = 1
-                    selectedYear.value += 1
-                } else {
-                    selectedMonth.value += 1
-                }
-            }) {
+            Button(
+                onClick = {
+                    if (selectedMonth.value == 12) {
+                        selectedMonth.value = 1
+                        selectedYear.value += 1
+                    } else {
+                        selectedMonth.value += 1
+                    }
+                    selectedDay.value = 0
+                    workouts.value = listOf()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF213455),
+                    contentColor = Color.White
+                )
+            ) {
                 Text(">")
             }
         }
+
 
         Spacer(modifier = Modifier.height(16.dp))
 
