@@ -68,11 +68,8 @@ fun HistoryScreen(navController: NavController) {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Display current and selected dates
-        Text(text = "Today's Date: $currentDateText")
-        Text(text = "Selected Date: $selectedDateText")
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         // Month navigation buttons
         Row(
