@@ -35,7 +35,12 @@ import java.time.LocalDate
 import java.time.Month
 import java.time.YearMonth
 
-
+/*
+    TODO 1 : Make calendar look nicer
+    TODO 2 : Remove Today's date and selected date at top of screen
+    TODO 3 : When button is clicked to go to next/previous month,
+             deselect the day pressed
+ */
 @Composable
 fun HistoryScreen(navController: NavController) {
     // Existing state for date selection
