@@ -16,7 +16,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -25,16 +27,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.peakphysique.app.controller.BottomNavBar
 import java.time.LocalDate
 import java.time.Month
 import java.time.YearMonth
-
 
 @Composable
 fun HistoryScreen(navController: NavController) {
@@ -60,11 +64,8 @@ fun HistoryScreen(navController: NavController) {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Display current and selected dates
-        Text(text = "Today's Date: $currentDateText")
-        Text(text = "Selected Date: $selectedDateText")
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         // Month navigation buttons
         Row(
@@ -72,14 +73,22 @@ fun HistoryScreen(navController: NavController) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Button(onClick = {
-                if (selectedMonth.value == 1) {
-                    selectedMonth.value = 12
-                    selectedYear.value -= 1
-                } else {
-                    selectedMonth.value -= 1
-                }
-            }) {
+            Button(
+                onClick = {
+                    if (selectedMonth.value == 1) {
+                        selectedMonth.value = 12
+                        selectedYear.value -= 1
+                    } else {
+                        selectedMonth.value -= 1
+                    }
+                    selectedDay.value = 0
+                    workouts.value = listOf()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF213455),
+                    contentColor = Color.White
+                )
+            ) {
                 Text("<")
             }
 
@@ -87,17 +96,26 @@ fun HistoryScreen(navController: NavController) {
                 text = "${Month.of(selectedMonth.value).name.lowercase().capitalize()} - ${selectedYear.value}",
             )
 
-            Button(onClick = {
-                if (selectedMonth.value == 12) {
-                    selectedMonth.value = 1
-                    selectedYear.value += 1
-                } else {
-                    selectedMonth.value += 1
-                }
-            }) {
+            Button(
+                onClick = {
+                    if (selectedMonth.value == 12) {
+                        selectedMonth.value = 1
+                        selectedYear.value += 1
+                    } else {
+                        selectedMonth.value += 1
+                    }
+                    selectedDay.value = 0
+                    workouts.value = listOf()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF213455),
+                    contentColor = Color.White
+                )
+            ) {
                 Text(">")
             }
         }
+
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -268,15 +286,24 @@ fun DayCell(
     Box(
         modifier = Modifier
             .size(40.dp)
-            .clickable(onClick = onClick)
+            .padding(4.dp)  // Add padding to create space between cells
+            .clip(CircleShape)  // Clip the background to a circle
             .background(when {
                 isSelected -> Color(0xFF003D6E) // Navy blue for selected date
-                isWorkoutDay -> Color(0x8A7CA8FF)      // Black for workout days
+                isWorkoutDay -> Color(0x8A7CA8FF)      // Light blue for workout days
                 currentDay -> Color(0xFF969696) // Current day is gray
                 else -> Color.Transparent        // Transparent for empty days
-            }),
+            })
+            .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = day.toString(), color = Color.Black)
+        Text(
+            text = day.toString(),
+            color = if (isSelected) Color.White else Color.Black,  // Make text white when selected for better contrast
+            style = TextStyle(
+                fontSize = 14.sp,
+                fontWeight = if (currentDay) FontWeight.Bold else FontWeight.Normal
+            )
+        )
     }
 }
