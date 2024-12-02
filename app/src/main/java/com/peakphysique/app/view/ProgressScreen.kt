@@ -14,12 +14,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.peakphysique.app.controller.BottomNavBar
-import org.chromium.base.Flag
 
 @Composable
 fun ProgressScreen(
     navController: NavController,
-    currentWeight: Float = 205.5f,
+    currentWeight: Float = 105.5f,
     startingWeight: Float = 280.0f,
     goalWeight: Float = 170.0f,
     strengthProgress: Map<String, Pair<Float, Float>> = mapOf(
@@ -159,11 +158,7 @@ fun ProgressScreen(
                         label = "PRs Set",
                         icon = Icons.Default.Star
                     )
-                    AchievementStat(
-                        value = "85%",
-                        label = "Adherence",
-                        icon = Icons.Default.CheckCircle
-                    )
+
                 }
             }
         }

@@ -20,9 +20,7 @@ import com.peakphysique.app.controller.BottomNavBar
 @Composable
 fun AccountScreen(navController: NavController,
                   onEditProfile: () -> Unit = {},
-                  onViewProgress: () -> Unit = {},
                   onViewWorkoutHistory: () -> Unit = {},
-                  onViewAchievements: () -> Unit = {},
                   onSettings: () -> Unit = {},
                   onLogout: () -> Unit = {}
 ) {
@@ -133,9 +131,9 @@ fun AccountScreen(navController: NavController,
         )
 
         MenuListItem(
-            icon = Icons.Default.Star,
-            title = "Achievements",
-            onClick = onViewAchievements
+            icon = Icons.Default.Add,
+            title = "Log Weight",
+            onClick = { navController.navigate("log_weight_screen") }
         )
 
         MenuListItem(

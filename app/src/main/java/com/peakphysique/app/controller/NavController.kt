@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.peakphysique.app.view.AccountScreen
 import com.peakphysique.app.view.FeedScreen
 import com.peakphysique.app.view.HistoryScreen
+import com.peakphysique.app.view.LogWeightScreen
 import com.peakphysique.app.view.LoginScreen
 import com.peakphysique.app.view.ProgressScreen
 import com.peakphysique.app.view.RegisterScreen
@@ -38,6 +39,9 @@ fun Navigation(){
         }
         composable("history_screen"){
             HistoryScreen(navController)
+        }
+        composable("log_weight_screen") {
+            LogWeightScreen(navController = navController)
         }
     }
 }

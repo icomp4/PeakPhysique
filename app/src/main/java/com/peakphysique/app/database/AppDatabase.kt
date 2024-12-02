@@ -8,26 +8,25 @@ import com.peakphysique.app.database.dao.UserDAO
 import com.peakphysique.app.model.User
 
 @Database(entities = [User::class], version = 1, exportSchema = true)
-abstract class AppDatabase: RoomDatabase() {
-    abstract fun userController(): UserDAO
+abstract class AppDatabase : RoomDatabase() {
+    abstract fun userDao(): UserDAO
+
     companion object {
+        @Volatile
         private var INSTANCE: AppDatabase? = null
+
         fun getDatabase(context: Context): AppDatabase {
-            if (INSTANCE == null) {
-                synchronized(this) {
-                    var instance = INSTANCE
-                    if (instance == null) {
-                        instance = Room.databaseBuilder(
-                            context.applicationContext,
-                            AppDatabase::class.java,
-                            "app_database"
-                        ).fallbackToDestructiveMigration()
-                            .build()
-                        INSTANCE = instance
-                    }
-                }
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    AppDatabase::class.java,
+                    "app_database"
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
+                INSTANCE = instance
+                instance
             }
-            return INSTANCE!!
         }
     }
 }
