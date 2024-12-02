@@ -61,6 +61,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.cronet.embedded)
+    implementation(libs.androidx.runtime.livedata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -80,5 +81,9 @@ dependencies {
     implementation("androidx.activity:activity-compose")
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material:material")
+    implementation ("com.google.dagger:hilt-android:2.x")
+    implementation ("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
+    implementation ("com.google.android.gms:play-services-fitness:21.2.0")
+    implementation ("com.google.android.gms:play-services-location:21.3.0")
 
 }
