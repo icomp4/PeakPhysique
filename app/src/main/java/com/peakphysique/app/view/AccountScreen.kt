@@ -14,16 +14,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.peakphysique.app.controller.BottomNavBar
+import com.peakphysique.app.viewmodel.AccountViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
-// TODO: Pull user data from database
 
 @Composable
-fun AccountScreen(navController: NavController,
-                  onEditProfile: () -> Unit = {},
-                  onViewWorkoutHistory: () -> Unit = {},
-                  onSettings: () -> Unit = {},
-                  onLogout: () -> Unit = {}
+fun AccountScreen(
+    navController: NavController,
+    viewModel: AccountViewModel = viewModel(),
+    onEditProfile: () -> Unit = {},
+    onViewWorkoutHistory: () -> Unit = {},
+    onSettings: () -> Unit = {},
+    onLogout: () -> Unit = {}
 ) {
+    val totalWorkouts by viewModel.totalWorkouts.collectAsState()
+    val recordsBroken by viewModel.recordsBroken.collectAsState()
+    val monthsActive by viewModel.monthsActive.collectAsState()
+
     val scrollState = rememberScrollState()
 
     Column(
@@ -110,9 +117,18 @@ fun AccountScreen(navController: NavController,
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    StatItem(number = "98", label = "Workouts")
-                    StatItem(number = "12", label = "Records Broken")
-                    StatItem(number = "6", label = "Months Active")
+                    StatItem(
+                        number = totalWorkouts.toString(),
+                        label = "Workouts"
+                    )
+                    StatItem(
+                        number = recordsBroken.toString(),
+                        label = "Records Broken"
+                    )
+                    StatItem(
+                        number = monthsActive.toString(),
+                        label = "Months Active"
+                    )
                 }
             }
         }

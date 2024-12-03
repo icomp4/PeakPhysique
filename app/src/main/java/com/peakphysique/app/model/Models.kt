@@ -30,6 +30,15 @@ data class WorkoutEntity(
     val date: LocalDateTime,
 )
 
+@Entity(tableName = "weight_logs")
+data class WeightEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val weight: Float,
+    val date: LocalDateTime
+)
+
+
 @Entity(
     tableName = "sets",
     foreignKeys = [

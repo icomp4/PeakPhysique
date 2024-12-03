@@ -6,25 +6,29 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.peakphysique.app.database.dao.UserDAO
+import com.peakphysique.app.database.dao.WeightDao
 import com.peakphysique.app.model.UserEntity
 import com.peakphysique.app.database.dao.WorkoutDao
 import com.peakphysique.app.model.Converters
 import com.peakphysique.app.model.WorkoutEntity
 import com.peakphysique.app.model.SetEntity
+import com.peakphysique.app.model.WeightEntity
 
 @Database(
     entities = [
         UserEntity::class,
         WorkoutEntity::class,
-        SetEntity::class
+        SetEntity::class,
+        WeightEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDAO
     abstract fun workoutDao(): WorkoutDao
+    abstract fun weightDao(): WeightDao
 
     companion object {
         @Volatile
@@ -36,7 +40,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "fitness_database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }

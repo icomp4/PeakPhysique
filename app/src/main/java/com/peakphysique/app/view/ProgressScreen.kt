@@ -12,21 +12,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.peakphysique.app.controller.BottomNavBar
+import com.peakphysique.app.viewmodel.ProgressViewModel
 
 @Composable
 fun ProgressScreen(
     navController: NavController,
-    currentWeight: Float = 105.5f,
-    startingWeight: Float = 280.0f,
-    goalWeight: Float = 170.0f,
-    strengthProgress: Map<String, Pair<Float, Float>> = mapOf(
-        "Bench Press" to Pair(45f, 200f),
-        "Squat" to Pair(225f, 315f),
-        "Deadlift" to Pair(225f, 450f)
-    )
+    viewModel: ProgressViewModel = viewModel(),
+    goalWeight: Float = 170.0f
 ) {
+    val currentWeight by viewModel.currentWeight.collectAsState()
+    val startingWeight by viewModel.startingWeight.collectAsState()
+    val strengthProgress by viewModel.strengthProgress.collectAsState()
+    val monthlyWorkouts by viewModel.monthlyWorkouts.collectAsState()
+    val monthlyPRs by viewModel.monthlyPRs.collectAsState()
+
     val scrollState = rememberScrollState()
 
     Column(
@@ -44,126 +46,162 @@ fun ProgressScreen(
         )
 
         // Weight Progress Card
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text(
-                    text = "Weight Progress",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    WeightProgressStat(
-                        label = "Starting",
-                        value = startingWeight,
-                        icon = Icons.Default.DateRange
-                    )
-                    WeightProgressStat(
-                        label = "Current",
-                        value = currentWeight,
-                        icon = Icons.Default.LocationOn
-                    )
-                    WeightProgressStat(
-                        label = "Goal",
-                        value = goalWeight,
-                        icon = Icons.Default.Star
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Weight Progress Bar
-                LinearProgressIndicator(
-                    progress = (startingWeight - currentWeight) / (startingWeight - goalWeight),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(8.dp)
-                )
-
-                Text(
-                    text = "Total Progress: ${String.format("%.1f", (startingWeight - currentWeight))} lbs",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
-            }
+        if (currentWeight != null && startingWeight != null) {
+            WeightProgressCard(
+                currentWeight = currentWeight!!,
+                startingWeight = startingWeight!!,
+                goalWeight = goalWeight
+            )
         }
 
         // Strength Progress Card
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text(
-                    text = "Strength Progress",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                strengthProgress.forEach { (exercise, progress) ->
-                    StrengthProgressItem(
-                        exercise = exercise,
-                        startWeight = progress.first,
-                        currentWeight = progress.second
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-            }
+        if (strengthProgress.isNotEmpty()) {
+            StrengthProgressCard(strengthProgress = strengthProgress)
         }
 
         // Monthly Progress Card
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
+        MonthlyProgressCard(
+            workouts = monthlyWorkouts,
+            prs = monthlyPRs
+        )
+    }
+    BottomNavBar(navController = navController)
+}
+
+@Composable
+private fun WeightProgressCard(
+    currentWeight: Float,
+    startingWeight: Float,
+    goalWeight: Float,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
         ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
+            Text(
+                text = "Weight Progress",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Text(
-                    text = "Monthly Achievements",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                WeightProgressStat(
+                    label = "Starting",
+                    value = startingWeight,
+                    icon = Icons.Default.DateRange
                 )
+                WeightProgressStat(
+                    label = "Current",
+                    value = currentWeight,
+                    icon = Icons.Default.LocationOn
+                )
+                WeightProgressStat(
+                    label = "Goal",
+                    value = goalWeight,
+                    icon = Icons.Default.Star
+                )
+            }
 
-                Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    AchievementStat(
-                        value = "12",
-                        label = "Workouts",
-                        icon = Icons.Default.Build
-                    )
-                    AchievementStat(
-                        value = "3",
-                        label = "PRs Set",
-                        icon = Icons.Default.Star
-                    )
+            LinearProgressIndicator(
+                progress = (startingWeight - currentWeight) / (startingWeight - goalWeight),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp)
+            )
 
-                }
+            Text(
+                text = "Total Progress: ${String.format("%.1f", (startingWeight - currentWeight))} lbs",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun StrengthProgressCard(
+    strengthProgress: Map<String, Pair<Float, Float>>,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = "Strength Progress",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            strengthProgress.forEach { (exercise, progress) ->
+                StrengthProgressItem(
+                    exercise = exercise,
+                    startWeight = progress.first,
+                    currentWeight = progress.second
+                )
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }
-    BottomNavBar(navController = navController)
+}
+
+@Composable
+private fun MonthlyProgressCard(
+    workouts: Int,
+    prs: Int,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = "Monthly Achievements",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                AchievementStat(
+                    value = workouts.toString(),
+                    label = "Workouts",
+                    icon = Icons.Default.Build
+                )
+                AchievementStat(
+                    value = prs.toString(),
+                    label = "PRs Set",
+                    icon = Icons.Default.Star
+                )
+            }
+        }
+    }
 }
 
 @Composable
