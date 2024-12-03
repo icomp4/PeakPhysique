@@ -4,25 +4,22 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
-import com.peakphysique.app.model.User
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
+import com.peakphysique.app.model.UserEntity
 
 @Dao
 interface UserDAO {
-    @Query("SELECT * FROM user")
-    fun getAll(): LiveData<List<User>>
+    @Query("SELECT * FROM users")
+    fun getAll(): LiveData<List<UserEntity>>
 
-    @Query("SELECT * FROM user WHERE username = :username")
-    fun getUserByUsername(username: String): LiveData<User>
+    @Query("SELECT * FROM users WHERE id = :id")
+    fun getById(id: Int): LiveData<UserEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(user: User)
+    suspend fun insert(user: UserEntity)
 
     @Delete
-    suspend fun delete(user: User)
+    suspend fun delete(user: UserEntity)
 
-    // Alternative delete method if you prefer using username
-    @Query("DELETE FROM user WHERE username = :username")
-    suspend fun deleteByUsername(username: String)
 }
