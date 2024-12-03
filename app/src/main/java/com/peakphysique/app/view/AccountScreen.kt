@@ -22,9 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 fun AccountScreen(
     navController: NavController,
     viewModel: AccountViewModel = viewModel(),
-    onEditProfile: () -> Unit = {},
     onViewWorkoutHistory: () -> Unit = {},
-    onSettings: () -> Unit = {},
     onLogout: () -> Unit = {}
 ) {
     val totalWorkouts by viewModel.totalWorkouts.collectAsState()
@@ -86,12 +84,6 @@ fun AccountScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
-                    Button(
-                        onClick = onEditProfile,
-                        modifier = Modifier.padding(top = 8.dp)
-                    ) {
-                        Text("Edit Profile")
-                    }
                 }
             }
         }
