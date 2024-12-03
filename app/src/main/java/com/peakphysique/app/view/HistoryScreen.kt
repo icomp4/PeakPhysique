@@ -41,6 +41,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.peakphysique.app.controller.BottomNavBar
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.Month
 import java.time.YearMonth
 
@@ -56,23 +57,26 @@ fun HistoryScreen(
     // Collect all workouts from the repository
     val allWorkouts by viewModel.allWorkouts.collectAsState()
 
-    // Transform WorkoutWithSets to calendar data
+    // Transform WorkoutWithSets to calendar data by extracting dates
     val workoutDates = allWorkouts
-        .map { it.workout.date.dayOfMonth }
+        .map { it.workout.date.toLocalDate() }  // Convert LocalDateTime to LocalDate
+        .filter { date ->  // Filter dates for the selected month/year
+            date.year == selectedYear.value &&
+                    date.monthValue == selectedMonth.value
+        }
+        .map { it.dayOfMonth }
         .distinct()
 
     // Filter workouts for selected date
     val selectedDateWorkouts = allWorkouts.filter { workout ->
-        workout.workout.date.let { date ->
-            date.year == selectedYear.value &&
-                    date.monthValue == selectedMonth.value &&
-                    date.dayOfMonth == selectedDay.value
-        }
+        val workoutDate = workout.workout.date
+        workoutDate.year == selectedYear.value &&
+                workoutDate.monthValue == selectedMonth.value &&
+                workoutDate.dayOfMonth == selectedDay.value
     }
 
     // Transform WorkoutWithSets to WorkoutData for display
     val workoutDisplayData = selectedDateWorkouts.flatMap { workoutWithSets ->
-        // Group sets by exercise name
         workoutWithSets.sets.groupBy { it.name }.map { (exerciseName, sets) ->
             WorkoutData(
                 exerciseName = exerciseName,
@@ -106,7 +110,8 @@ fun HistoryScreen(
                     } else {
                         selectedMonth.value -= 1
                     }
-                    selectedDay.value = 0
+                    // Reset selected day when changing months
+                    selectedDay.value = 1
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF213455),
@@ -128,7 +133,8 @@ fun HistoryScreen(
                     } else {
                         selectedMonth.value += 1
                     }
-                    selectedDay.value = 0
+                    // Reset selected day when changing months
+                    selectedDay.value = 1
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF213455),
@@ -157,6 +163,14 @@ fun HistoryScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        if (workoutDisplayData.isEmpty() && selectedDay.value > 0) {
+            Text(
+                text = "No workouts recorded for this date",
+                modifier = Modifier.padding(16.dp),
+                color = Color.Gray
+            )
+        }
+
         // Workout cards
         LazyColumn(
             modifier = Modifier
@@ -169,6 +183,11 @@ fun HistoryScreen(
         }
     }
     BottomNavBar(navController)
+}
+
+// Add this extension function to support date conversions
+fun LocalDateTime.toLocalDate(): LocalDate {
+    return LocalDate.of(this.year, this.month, this.dayOfMonth)
 }
 
 @Composable
