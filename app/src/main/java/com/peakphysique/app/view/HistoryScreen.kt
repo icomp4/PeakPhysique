@@ -110,8 +110,7 @@ fun HistoryScreen(
                     } else {
                         selectedMonth.value -= 1
                     }
-                    // Reset selected day when changing months
-                    selectedDay.value = 1
+                    selectedDay.value = 0
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF213455),
@@ -121,9 +120,30 @@ fun HistoryScreen(
                 Text("<")
             }
 
-            Text(
-                text = "${Month.of(selectedMonth.value).name.lowercase().capitalize()} - ${selectedYear.value}",
-            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "${Month.of(selectedMonth.value).name.lowercase().capitalize()} - ${selectedYear.value}",
+                    fontWeight = FontWeight.Bold
+                )
+
+                Button(
+                    onClick = {
+                        val today = LocalDate.now()
+                        selectedYear.value = today.year
+                        selectedMonth.value = today.monthValue
+                        selectedDay.value = today.dayOfMonth
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF213455),
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
+                    Text("Today")
+                }
+            }
 
             Button(
                 onClick = {
@@ -133,8 +153,7 @@ fun HistoryScreen(
                     } else {
                         selectedMonth.value += 1
                     }
-                    // Reset selected day when changing months
-                    selectedDay.value = 1
+                    selectedDay.value = 0
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF213455),
