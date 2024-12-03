@@ -1,3 +1,16 @@
+/**
+ * HistoryScreen provides a calendar-based interface for viewing workout history.
+ * It displays a monthly calendar with workout indicators and detailed workout information
+ * for selected dates. The screen allows users to navigate between months and view
+ * exercise details for specific workout days.
+ *
+ * Features:
+ * - Monthly calendar navigation
+ * - Visual indicators for workout days
+ * - Detailed workout information display
+ * - Current day highlighting
+ */
+
 package com.peakphysique.app.view
 
 import TrackingViewModel
@@ -49,19 +62,20 @@ fun HistoryScreen(
     navController: NavController,
     viewModel: TrackingViewModel = viewModel()
 ) {
+    // State management for calendar date selection
     val selectedDay = remember { mutableStateOf(LocalDate.now().dayOfMonth) }
     val selectedMonth = remember { mutableStateOf(LocalDate.now().monthValue) }
     val selectedYear = remember { mutableStateOf(LocalDate.now().year) }
 
-    // Collect all workouts from the repository
+    // Collect and transform workout data
     val allWorkouts by viewModel.allWorkouts.collectAsState()
 
-    // Transform WorkoutWithSets to calendar data
+    // Extract unique dates that have workouts for calendar indicators
     val workoutDates = allWorkouts
         .map { it.workout.date.dayOfMonth }
         .distinct()
 
-    // Filter workouts for selected date
+    // Filter workouts for the selected date
     val selectedDateWorkouts = allWorkouts.filter { workout ->
         workout.workout.date.let { date ->
             date.year == selectedYear.value &&
@@ -70,9 +84,8 @@ fun HistoryScreen(
         }
     }
 
-    // Transform WorkoutWithSets to WorkoutData for display
+    // Transform workout data for display, grouping sets by exercise
     val workoutDisplayData = selectedDateWorkouts.flatMap { workoutWithSets ->
-        // Group sets by exercise name
         workoutWithSets.sets.groupBy { it.name }.map { (exerciseName, sets) ->
             WorkoutData(
                 exerciseName = exerciseName,
@@ -92,12 +105,13 @@ fun HistoryScreen(
     ) {
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Month navigation
+        // Month navigation controls
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Previous month button
             Button(
                 onClick = {
                     if (selectedMonth.value == 1) {
@@ -106,7 +120,7 @@ fun HistoryScreen(
                     } else {
                         selectedMonth.value -= 1
                     }
-                    selectedDay.value = 0
+                    selectedDay.value = 0  // Reset day selection on month change
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF213455),
@@ -116,10 +130,12 @@ fun HistoryScreen(
                 Text("<")
             }
 
+            // Current month and year display
             Text(
                 text = "${Month.of(selectedMonth.value).name.lowercase().capitalize()} - ${selectedYear.value}",
             )
 
+            // Next month button
             Button(
                 onClick = {
                     if (selectedMonth.value == 12) {
@@ -128,7 +144,7 @@ fun HistoryScreen(
                     } else {
                         selectedMonth.value += 1
                     }
-                    selectedDay.value = 0
+                    selectedDay.value = 0  // Reset day selection on month change
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF213455),
@@ -141,7 +157,7 @@ fun HistoryScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Calendar view
+        // Calendar grid display
         CalendarView(
             year = selectedYear.value,
             month = selectedMonth.value,
@@ -150,14 +166,12 @@ fun HistoryScreen(
             currentDay = if (selectedYear.value == LocalDate.now().year &&
                 selectedMonth.value == LocalDate.now().monthValue)
                 LocalDate.now().dayOfMonth else -1,
-            onDateClick = { day ->
-                selectedDay.value = day
-            }
+            onDateClick = { day -> selectedDay.value = day }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Workout cards
+        // Workout details for selected date
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -171,6 +185,11 @@ fun HistoryScreen(
     BottomNavBar(navController)
 }
 
+/**
+ * Displays a card containing workout details for a specific exercise.
+ *
+ * @param workout WorkoutData containing exercise details
+ */
 @Composable
 fun WorkoutCard(workout: WorkoutData) {
     Card(
@@ -207,6 +226,9 @@ fun WorkoutCard(workout: WorkoutData) {
     }
 }
 
+/**
+ * Displays the days of the week header for the calendar.
+ */
 @Composable
 fun WeekHeader() {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -216,6 +238,16 @@ fun WeekHeader() {
     }
 }
 
+/**
+ * Calendar grid component displaying days of the month with workout indicators.
+ *
+ * @param year Current year being displayed
+ * @param month Current month being displayed (1-12)
+ * @param workoutDates List of days containing workouts
+ * @param selectedDay Currently selected day
+ * @param currentDay Today's date (if viewing current month/year)
+ * @param onDateClick Callback for date selection
+ */
 @Composable
 fun CalendarView(
     year: Int,
@@ -231,12 +263,12 @@ fun CalendarView(
     Column {
         WeekHeader()
         LazyVerticalGrid(columns = GridCells.Fixed(7)) {
-            // Add empty cells for the first day offset
+            // Add empty cells for days before the first of the month
             repeat(firstDayOfWeek) {
                 item { Spacer(modifier = Modifier.size(40.dp)) }
             }
 
-            // Add cells for each day of the month
+            // Generate calendar days
             for (day in 1..daysInMonth) {
                 item {
                     DayCell(
@@ -252,6 +284,15 @@ fun CalendarView(
     }
 }
 
+/**
+ * Individual day cell in the calendar grid.
+ *
+ * @param day Day of the month
+ * @param isWorkoutDay Whether this day contains workout data
+ * @param isSelected Whether this day is currently selected
+ * @param currentDay Whether this is today's date
+ * @param onClick Callback for cell selection
+ */
 @Composable
 fun DayCell(
     day: Int,
@@ -266,9 +307,9 @@ fun DayCell(
             .padding(4.dp)
             .clip(CircleShape)
             .background(when {
-                isSelected -> Color(0xFF003D6E)
-                isWorkoutDay -> Color(0x8A7CA8FF)
-                currentDay -> Color(0xFF969696)
+                isSelected -> Color(0xFF003D6E)    // Selected day
+                isWorkoutDay -> Color(0x8A7CA8FF)  // Day with workout data
+                currentDay -> Color(0xFF969696)     // Current day
                 else -> Color.Transparent
             })
             .clickable(onClick = onClick),
@@ -285,6 +326,9 @@ fun DayCell(
     }
 }
 
+/**
+ * Data class representing summarized workout information for display.
+ */
 data class WorkoutData(
     val exerciseName: String,
     val sets: Int,

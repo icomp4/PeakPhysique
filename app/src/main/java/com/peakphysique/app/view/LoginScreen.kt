@@ -1,3 +1,14 @@
+/**
+ * LoginScreen provides the user authentication interface for the Peak Physique app.
+ * It allows existing users to log in using their email/username and password,
+ * with navigation options to the registration screen for new users.
+ *
+ * Key features:
+ * - Email/username input field
+ * - Secure password input with masked text
+ * - Navigation to main feed upon successful login
+ * - Registration link for new users
+ */
 package com.peakphysique.app.view
 
 import androidx.compose.foundation.clickable
@@ -27,77 +38,93 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.peakphysique.app.ui.theme.Buttons
 
-    @Composable
-    fun LoginScreen(navController: NavController, modifier: Modifier = Modifier){
-        var username by remember { mutableStateOf("") }
-        var email by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
+@Composable
+fun LoginScreen(
+    navController: NavController,     // For handling navigation between screens
+    modifier: Modifier = Modifier     // Optional modifier for customizing layout
+) {
+    // State management for form inputs
+    var username by remember { mutableStateOf("") }  // Unused in current implementation
+    var email by remember { mutableStateOf("") }     // Stores email/username input
+    var password by remember { mutableStateOf("") }  // Stores password input
 
-        Column(
+    // Main container for login form
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,  // Center align all children
+        verticalArrangement = Arrangement.Center            // Vertically center content
+    ) {
+        // App title
+        Text(
+            text = "Peak Physique",
+            fontSize = 32.sp,
+            modifier = Modifier.padding(20.dp)
+        )
+
+        // Screen title
+        Text(
+            text = "Login Screen",
+            fontSize = 24.sp,
+            modifier = Modifier.padding(20.dp)
+        )
+
+        // Email/Username input field
+        TextField(
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Enter your email/username...") },
             modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .width(400.dp)    // Fixed width for consistent form layout
+                .padding(20.dp)
+        )
+
+        // Password input field with masked text
+        TextField(
+            value = password,
+            onValueChange = { password = it },
+            visualTransformation = PasswordVisualTransformation(),  // Masks password input
+            label = { Text("Enter your password...") },
+            modifier = Modifier
+                .width(400.dp)
+                .padding(20.dp)
+        )
+
+        // Login button with custom styling
+        Button(
+            onClick = {
+                // TODO: Implement user authentication
+                // - Validate input fields
+                // - Check credentials against database
+                // - Handle authentication errors
+                navController.navigate("feed_screen")  // Navigate to main feed on success
+            },
+            modifier = Modifier.width(150.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Buttons)  // Custom theme color
         ) {
-            Text(text = "Peak Physique", fontSize = 32.sp, modifier = Modifier.padding(20.dp)
+            Text("Login", color = Color.White)
+        }
 
-            )
+        // Registration link section
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(vertical = 8.dp)
+        ) {
+            // Static text
             Text(
-                text = "Login Screen",
-                fontSize = 24.sp,
-                modifier = Modifier.padding(20.dp)
+                text = "Don't have an account?",
+                modifier = Modifier.padding(end = 4.dp)
             )
 
-            TextField(
-                value = email,
-                onValueChange = { email = it },
-                label = { Text("Enter your email/username...") },
+            // Clickable registration link
+            Text(
+                text = "Register",
+                color = Color.Blue,
+                textDecoration = TextDecoration.Underline,
                 modifier = Modifier
-                    .width(400.dp)
-                    .padding(20.dp)
+                    .clickable(onClick = { navController.navigate("register_screen") })
+                    .padding(start = 4.dp)
             )
-
-            TextField(
-                value = password,
-                onValueChange = { password = it },
-                visualTransformation = PasswordVisualTransformation(),
-                label = { Text("Enter your password...") },
-                modifier = Modifier
-                    .width(400.dp)
-                    .padding(20.dp)
-            )
-
-            Button(
-                onClick = {
-                    // TODO: Implement validation, and database check
-                    navController.navigate("feed_screen")
-
-                },
-                modifier = Modifier
-                    .width(150.dp),
-
-                // Use the custom color defined in the theme for the button
-                colors = ButtonDefaults.buttonColors(containerColor = Buttons),
-            ) {
-                Text("Login", color = Color.White)
-            }
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(vertical = 8.dp)
-            ) {
-                Text(text = "Don't have an account?", modifier = Modifier.padding(end = 4.dp))
-
-                // Clickable Text for Login
-                Text(
-                    text = "Register",
-                    color = Color.Blue,
-                    textDecoration = TextDecoration.Underline,
-                    modifier = Modifier
-                        .clickable(onClick = { navController.navigate("register_screen") })
-                        .padding(start = 4.dp),
-                )
-            }
         }
     }
-
+}

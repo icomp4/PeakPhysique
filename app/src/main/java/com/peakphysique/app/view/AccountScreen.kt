@@ -1,3 +1,12 @@
+/**
+ * AccountScreen serves as the user's profile page within the Peak Physique app.
+ * It displays user information, statistics, and provides navigation to various account-related features.
+ *
+ * The screen is divided into three main sections:
+ * 1. Profile Card - User's basic information and profile picture
+ * 2. Statistics Card - Quick overview of user's achievements
+ * 3. Navigation Menu - Links to various account-related features
+ */
 package com.peakphysique.app.view
 
 import androidx.compose.foundation.layout.*
@@ -15,17 +24,20 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.peakphysique.app.controller.BottomNavBar
 
-// TODO: Pull user data from database
+// TODO: Pull user data from database - Implement user data retrieval from backend
 
 @Composable
-fun AccountScreen(navController: NavController,
-                  onEditProfile: () -> Unit = {},
-                  onViewWorkoutHistory: () -> Unit = {},
-                  onSettings: () -> Unit = {},
-                  onLogout: () -> Unit = {}
+fun AccountScreen(
+    navController: NavController,
+    onEditProfile: () -> Unit = {},           // Callback for profile editing
+    onViewWorkoutHistory: () -> Unit = {},    // Callback for viewing workout history
+    onSettings: () -> Unit = {},              // Callback for settings navigation
+    onLogout: () -> Unit = {}                 // Callback for logout action
 ) {
+    // State for handling scrollable content
     val scrollState = rememberScrollState()
 
+    // Main container for all content
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -33,7 +45,7 @@ fun AccountScreen(navController: NavController,
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Profile Section
+        // Profile Card Section
         Card(
             modifier = Modifier
                 .fillMaxWidth(0.9f)
@@ -48,7 +60,7 @@ fun AccountScreen(navController: NavController,
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    // Profile Picture
+                    // Profile Picture placeholder
                     Surface(
                         modifier = Modifier
                             .padding(top = 34.dp)
@@ -67,6 +79,7 @@ fun AccountScreen(navController: NavController,
 
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    // User information display
                     Text(
                         text = "John Doe",
                         style = MaterialTheme.typography.headlineSmall,
@@ -79,6 +92,7 @@ fun AccountScreen(navController: NavController,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
+                    // Profile edit button
                     Button(
                         onClick = onEditProfile,
                         modifier = Modifier.padding(top = 8.dp)
@@ -89,7 +103,7 @@ fun AccountScreen(navController: NavController,
             }
         }
 
-        // Stats Section
+        // Statistics Card Section
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -106,6 +120,7 @@ fun AccountScreen(navController: NavController,
 
                 Spacer(modifier = Modifier.height(8.dp))
 
+                // Stats row displaying user achievements
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
@@ -117,7 +132,7 @@ fun AccountScreen(navController: NavController,
             }
         }
 
-        // Menu Items
+        // Navigation Menu Items
         MenuListItem(
             icon = Icons.Default.FavoriteBorder,
             title = "View Progress",
@@ -144,6 +159,7 @@ fun AccountScreen(navController: NavController,
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Logout button
         OutlinedButton(
             onClick = onLogout,
             modifier = Modifier.fillMaxWidth()
@@ -159,6 +175,12 @@ fun AccountScreen(navController: NavController,
     BottomNavBar(navController = navController)
 }
 
+/**
+ * Displays a single statistic item with a number and label.
+ *
+ * @param number The numerical value to display
+ * @param label Description of what the number represents
+ */
 @Composable
 private fun StatItem(
     number: String,
@@ -180,6 +202,13 @@ private fun StatItem(
     }
 }
 
+/**
+ * Creates a clickable menu item with an icon, title, and arrow indicator.
+ *
+ * @param icon Vector icon to display on the left
+ * @param title Text label for the menu item
+ * @param onClick Callback for when the item is clicked
+ */
 @Composable
 private fun MenuListItem(
     icon: ImageVector,
@@ -193,10 +222,10 @@ private fun MenuListItem(
             .padding(vertical = 4.dp)
     ) {
         Row(
-            modifier = Modifier
-                .padding(16.dp),
+            modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Left icon
             Icon(
                 imageVector = icon,
                 contentDescription = null,
@@ -205,6 +234,7 @@ private fun MenuListItem(
 
             Spacer(modifier = Modifier.width(16.dp))
 
+            // Menu item title
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge
@@ -212,6 +242,7 @@ private fun MenuListItem(
 
             Spacer(modifier = Modifier.weight(1f))
 
+            // Right arrow indicator
             Icon(
                 imageVector = Icons.Default.KeyboardArrowDown,
                 contentDescription = null,

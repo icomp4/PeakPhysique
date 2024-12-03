@@ -26,29 +26,36 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
+/**
+ * TrackingScreen is the main interface for logging workout exercises and sets.
+ * It allows users to select exercises, input workout details, and manage their workout session.
+ *
+ * @param navController Navigation controller for handling screen navigation
+ * @param viewModel ViewModel instance for managing workout data and business logic
+ */
 @Composable
 fun TrackingScreen(
     navController: NavHostController,
     viewModel: TrackingViewModel = viewModel()
 ) {
-    // UI State
+    // State management for form inputs and UI controls
     var exerciseType by remember { mutableStateOf("Select Exercise") }
     val exerciseOptions = listOf("Squat", "Bench Press", "Deadlift")
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false) }  // Controls exercise dropdown expansion
     var reps by remember { mutableStateOf("") }
     var weight by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
-    val maxNoteLength = 300
+    val maxNoteLength = 300  // Maximum character limit for notes
 
-    // Collect workout sets from ViewModel
+    // State collection from ViewModel for workout sets
     val cardList by viewModel.workoutSets.collectAsState()
 
-    // Dialog states
+    // Dialog control states
     var showWorkoutCompleteDialog by remember { mutableStateOf(false) }
     var showDeleteConfirmation by remember { mutableStateOf(false) }
     var setToDelete by remember { mutableStateOf<WorkoutSet?>(null) }
 
-    // Validation state
+    // Input validation state - ensures all required fields are filled correctly
     val isValidInput = remember(exerciseType, reps, weight) {
         exerciseType != "Select Exercise" &&
                 reps.isNotBlank() && reps.toDoubleOrNull() != null &&
@@ -64,7 +71,7 @@ fun TrackingScreen(
     ) {
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Exercise Type Dropdown
+        // Exercise selection dropdown with custom styling
         Box {
             Text(
                 text = exerciseType,
@@ -92,7 +99,7 @@ fun TrackingScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Reps Input
+        // Numeric input field for repetitions with validation
         TextField(
             value = reps,
             onValueChange = { reps = it },
@@ -104,7 +111,7 @@ fun TrackingScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Weight Input
+        // Numeric input field for weight with validation
         TextField(
             value = weight,
             onValueChange = { weight = it },
@@ -116,7 +123,7 @@ fun TrackingScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Notes Input
+        // Notes input field with character counter
         Column(modifier = Modifier.fillMaxWidth()) {
             TextField(
                 value = notes,
@@ -139,7 +146,7 @@ fun TrackingScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Add Set Button
+        // Button to add new workout set - enabled only when input is valid
         Button(
             onClick = {
                 val exercise = WorkoutSet(
@@ -150,6 +157,7 @@ fun TrackingScreen(
                     notes = notes
                 )
                 viewModel.addSet(exercise)
+                // Reset form after adding set
                 reps = ""
                 weight = ""
                 notes = ""
@@ -162,7 +170,7 @@ fun TrackingScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Complete Workout Button
+        // Complete workout button - only shown when sets exist
         if (cardList.isNotEmpty()) {
             Button(
                 onClick = { showWorkoutCompleteDialog = true },
@@ -177,7 +185,7 @@ fun TrackingScreen(
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        // Sets List
+        // Scrollable list of recorded workout sets
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -187,7 +195,7 @@ fun TrackingScreen(
         ) {
             items(
                 items = cardList,
-                key = { it.id }
+                key = { it.id }  // Unique key for efficient recomposition
             ) { set ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -200,6 +208,7 @@ fun TrackingScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        // Set details display
                         Column(modifier = Modifier.weight(1f)) {
                             Text("Exercise: ${set.name}")
                             Text("Reps: ${set.reps}")
@@ -209,6 +218,7 @@ fun TrackingScreen(
                             }
                         }
 
+                        // Delete button with confirmation dialog
                         IconButton(
                             onClick = {
                                 setToDelete = set
@@ -227,7 +237,7 @@ fun TrackingScreen(
         }
     }
 
-    // Workout Complete Dialog
+    // Workout completion confirmation dialog
     if (showWorkoutCompleteDialog) {
         AlertDialog(
             onDismissRequest = { showWorkoutCompleteDialog = false },
@@ -260,7 +270,7 @@ fun TrackingScreen(
         )
     }
 
-    // Delete Confirmation Dialog
+    // Set deletion confirmation dialog
     if (showDeleteConfirmation && setToDelete != null) {
         AlertDialog(
             onDismissRequest = {
@@ -293,5 +303,6 @@ fun TrackingScreen(
         )
     }
 
+    // Navigation bar at the bottom of the screen
     BottomNavBar(navController)
 }

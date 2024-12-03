@@ -4,6 +4,17 @@
     It should also incorporate a controller to handle the business logic
  */
 
+/**
+ * RegisterScreen is a user interface component responsible for new user registration.
+ * It provides a form for collecting user credentials and account creation.
+ *
+ * Key features:
+ * - Username, email, and password input fields
+ * - Account creation button
+ * - Navigation link to login screen for existing users
+ * - Responsive layout with centered content
+ */
+
 package com.peakphysique.app.view
 
 import androidx.compose.foundation.clickable
@@ -33,35 +44,47 @@ import androidx.navigation.NavController
 import com.peakphysique.app.ui.theme.Buttons
 
 @Composable
-fun RegisterScreen(navController: NavController, modifier: Modifier = Modifier) {
-    var username by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+fun RegisterScreen(
+    navController: NavController,  // Navigation controller for handling screen transitions
+    modifier: Modifier = Modifier   // Optional modifier for customizing the screen's layout
+) {
+    // State management for form inputs
+    var username by remember { mutableStateOf("") }  // Stores username input value
+    var email by remember { mutableStateOf("") }     // Stores email input value
+    var password by remember { mutableStateOf("") }  // Stores password input value
 
+    // Root column containing all screen elements
     Column(
         modifier = Modifier
             .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        horizontalAlignment = Alignment.CenterHorizontally,  // Center-align all children horizontally
+        verticalArrangement = Arrangement.Center            // Center-align all children vertically
     ) {
-        Text(text = "Peak Physique", fontSize = 32.sp, modifier = Modifier.padding(20.dp)
-
+        // App title display
+        Text(
+            text = "Peak Physique",
+            fontSize = 32.sp,
+            modifier = Modifier.padding(20.dp)
         )
+
+        // Screen title display
         Text(
             text = "Register Screen",
             fontSize = 24.sp,
             modifier = Modifier.padding(20.dp)
         )
 
+        // Username input field
         TextField(
             value = username,
             onValueChange = { username = it },
             label = { Text("Enter your username...") },
             modifier = Modifier
-                .width(400.dp)
-                .padding(20.dp)
+                .width(400.dp)    // Fixed width for consistent form layout
+                .padding(20.dp)   // Spacing between form elements
         )
 
+        // Email input field
         TextField(
             value = email,
             onValueChange = { email = it },
@@ -71,43 +94,48 @@ fun RegisterScreen(navController: NavController, modifier: Modifier = Modifier) 
                 .padding(20.dp)
         )
 
+        // Password input field with hidden text
         TextField(
             value = password,
             onValueChange = { password = it },
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = PasswordVisualTransformation(),  // Masks password input
             label = { Text("Enter your password...") },
             modifier = Modifier
                 .width(400.dp)
                 .padding(20.dp)
         )
 
+        // Account creation button
         Button(
             onClick = {
-
+                // TODO: Implement account creation logic
+                // Should validate inputs and call appropriate authentication service
             },
-            modifier = Modifier
-                .width(150.dp),
-
-            // Use the custom color defined in the theme for the button
-            colors = ButtonDefaults.buttonColors(containerColor = Buttons),
+            modifier = Modifier.width(150.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Buttons)  // Custom theme color
         ) {
             Text("Create Account", color = Color.White)
         }
 
+        // Login redirect section
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(vertical = 8.dp)
         ) {
-            Text(text = "Already have an account?", modifier = Modifier.padding(end = 4.dp))
+            // Static text
+            Text(
+                text = "Already have an account?",
+                modifier = Modifier.padding(end = 4.dp)
+            )
 
-            // Clickable Text for Login
+            // Clickable login link
             Text(
                 text = "Login",
                 color = Color.Blue,
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier
-                    .clickable(onClick = { navController.navigate("login_screen") })
-                    .padding(start = 4.dp),
+                    .clickable(onClick = { navController.navigate("login_screen") })  // Navigate to login screen
+                    .padding(start = 4.dp)
             )
         }
     }
