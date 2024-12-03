@@ -77,3 +77,10 @@ data class WorkoutSet(
     val weight: String,
     val notes: String
 )
+
+data class Goals(
+    val weightGoal: Float = 0f,
+    val benchGoal: Float = 0f,
+    val squatGoal: Float = 0f,
+    val deadliftGoal: Float = 0f
+)

@@ -155,7 +155,7 @@ fun AccountScreen(
         MenuListItem(
             icon = Icons.Default.Settings,
             title = "Settings",
-            onClick = onSettings
+            onClick = { navController.navigate("settings_screen") }
         )
 
         Spacer(modifier = Modifier.height(16.dp))

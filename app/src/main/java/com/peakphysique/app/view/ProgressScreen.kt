@@ -21,13 +21,13 @@ import com.peakphysique.app.viewmodel.ProgressViewModel
 fun ProgressScreen(
     navController: NavController,
     viewModel: ProgressViewModel = viewModel(),
-    goalWeight: Float = 170.0f
 ) {
     val currentWeight by viewModel.currentWeight.collectAsState()
     val startingWeight by viewModel.startingWeight.collectAsState()
     val strengthProgress by viewModel.strengthProgress.collectAsState()
     val monthlyWorkouts by viewModel.monthlyWorkouts.collectAsState()
     val monthlyPRs by viewModel.monthlyPRs.collectAsState()
+    val goalWeight by viewModel.goalWeight.collectAsState()
 
     val scrollState = rememberScrollState()
 

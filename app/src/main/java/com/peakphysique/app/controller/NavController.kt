@@ -11,6 +11,7 @@ import com.peakphysique.app.view.LogWeightScreen
 import com.peakphysique.app.view.LoginScreen
 import com.peakphysique.app.view.ProgressScreen
 import com.peakphysique.app.view.RegisterScreen
+import com.peakphysique.app.view.SettingsScreen
 import com.peakphysique.app.view.TrackingScreen
 
 @Composable
@@ -42,6 +43,9 @@ fun Navigation(){
         }
         composable("log_weight_screen") {
             LogWeightScreen(navController = navController)
+        }
+        composable("settings_screen"){
+            SettingsScreen(navController)
         }
     }
 }
