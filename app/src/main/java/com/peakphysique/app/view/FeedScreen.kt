@@ -28,6 +28,7 @@ import androidx.navigation.NavController
 import com.peakphysique.app.controller.BottomNavBar
 import com.peakphysique.app.viewmodel.FeedViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.peakphysique.app.ui.theme.Buttons
 import com.peakphysique.app.viewmodel.FeedViewModelFactory
 
 @Composable
@@ -45,18 +46,34 @@ fun FeedScreen(
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 44.dp)
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = 60.dp)
-        ) {
-            items(feedEntries) { entry ->
-                FeedEntry(
-                    type = entry.type,
-                    achievement = entry.achievement,
-                    time = entry.time,
-                    icon = entry.icon
+        if (feedEntries.isEmpty()) {
+            // Modified with LazyColumn below to if else to allow empty feed to take text
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "      No Achievements?\n\n \uD83C\uDFCB\uFE0F\u200D♂\uFE0F Lets Get Started! \uD83C\uDFCB\uFE0F\u200D♀\uFE0F",
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Buttons,
+                    modifier = Modifier.offset(y = (-70).dp)
                 )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 60.dp)
+            ) {
+                items(feedEntries) { entry ->
+                    FeedEntry(
+                        type = entry.type,
+                        achievement = entry.achievement,
+                        time = entry.time,
+                        icon = entry.icon
+                    )
+                }
             }
         }
     }
