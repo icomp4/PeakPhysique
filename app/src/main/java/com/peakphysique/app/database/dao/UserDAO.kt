@@ -2,22 +2,24 @@ package com.peakphysique.app.database.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Query
-import com.peakphysique.app.model.User
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import com.peakphysique.app.model.UserEntity
 
 @Dao
 interface UserDAO {
+    @Query("SELECT * FROM users")
+    fun getAll(): LiveData<List<UserEntity>>
 
-    @Query("SELECT * FROM user")
-    fun getAll(): LiveData<List<User>>
+    @Query("SELECT * FROM users WHERE id = :id")
+    fun getById(id: Int): LiveData<UserEntity>
 
-    @Query("SELECT * FROM user WHERE username = :username")
-    fun getUserByUsername(username: String): LiveData<User>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(user: UserEntity)
 
-    @Query("INSERT INTO user (username, email, password) VALUES (:username, :email, :password)")
-    fun insert(username: String, email: String, password: String)
-
-    @Query("DELETE FROM user WHERE username = :username")
-    fun delete(username: String)
+    @Delete
+    suspend fun delete(user: UserEntity)
 
 }

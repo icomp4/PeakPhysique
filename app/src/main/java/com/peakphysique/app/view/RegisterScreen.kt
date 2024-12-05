@@ -30,10 +30,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import com.peakphysique.app.model.User
 import com.peakphysique.app.ui.theme.Buttons
-import java.sql.Time
 
 @Composable
 fun RegisterScreen(navController: NavController, modifier: Modifier = Modifier) {
@@ -86,10 +83,6 @@ fun RegisterScreen(navController: NavController, modifier: Modifier = Modifier) 
 
         Button(
             onClick = {
-                var newUser = User(username, email, password, 75, 200, 21, System.currentTimeMillis())
-                // Perform validation
-
-                // Call controller to handle registration
 
             },
             modifier = Modifier
