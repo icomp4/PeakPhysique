@@ -55,9 +55,10 @@ class ProgressViewModel(application: Application) : AndroidViewModel(application
 
     private fun observeGoals() {
         viewModelScope.launch {
-            val goals = settingsRepository.getGoals()
-            _goalWeight.value = goals.weightGoal
-            _strengthGoals.value = goals
+            settingsRepository.goalsFlow.collect { goals ->
+                _goalWeight.value = goals.weightGoal
+                _strengthGoals.value = goals
+            }
         }
     }
 

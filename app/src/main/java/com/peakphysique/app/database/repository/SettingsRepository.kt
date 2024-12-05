@@ -1,10 +1,35 @@
 package com.peakphysique.app.database.repository
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.peakphysique.app.model.Goals
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class SettingsRepository(private val context: Context) {
     private val sharedPreferences = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+
+    private val _goals = MutableStateFlow(getGoals())
+    val goalsFlow: StateFlow<Goals> = _goals.asStateFlow()
+
+    private val prefListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        if (key != null) {
+            when {
+                key.startsWith("weight_goal") ||
+                        key.startsWith("bench_goal") ||
+                        key.startsWith("squat_goal") ||
+                        key.startsWith("deadlift_goal") -> {
+                    _goals.value = getGoals()
+                }
+            }
+        }
+    }
+
+    init {
+        // Register the listener
+        sharedPreferences.registerOnSharedPreferenceChangeListener(prefListener)
+    }
 
     fun isDarkMode(): Boolean {
         return sharedPreferences.getBoolean("is_dark_mode", false)
@@ -39,5 +64,6 @@ class SettingsRepository(private val context: Context) {
             putFloat("deadlift_goal", goals.deadliftGoal)
             apply()
         }
+        _goals.value = goals
     }
 }

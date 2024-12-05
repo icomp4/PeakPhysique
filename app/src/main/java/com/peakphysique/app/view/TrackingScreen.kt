@@ -36,9 +36,9 @@ fun TrackingScreen(
     val arm = "\uD83D\uDCAA"
     val leg = "\uD83E\uDDB5"
 
-    val exerciseOptions = listOf("Squat $arm", "Bench Press $arm$leg", "Deadlift $arm$leg", "Lateral Raise $arm",
-                                 "Leg Press $leg", "Overhead Press $arm", "Barbell Curls $arm", "Hammer Curls $arm",
-                                 "Lunges $leg", "Kettle Ball Swings $arm$leg", "Calf Raises $leg", "Farmer's Carry $arm$leg")
+    val exerciseOptions = listOf("Squat", "Bench Press", "Deadlift", "Lateral Raise",
+                                 "Leg Press", "Overhead Press", "Barbell Curls", "Hammer Curls",
+                                 "Lunges", "Kettle Ball Swings", "Calf Raises", "Farmer's Carry")
     var expanded by remember { mutableStateOf(false) }
     var reps by remember { mutableStateOf("") }
     var weight by remember { mutableStateOf("") }
