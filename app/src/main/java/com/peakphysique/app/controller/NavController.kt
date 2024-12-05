@@ -14,6 +14,7 @@ import com.peakphysique.app.view.LogWeightScreen
 import com.peakphysique.app.view.LoginScreen
 import com.peakphysique.app.view.ProgressScreen
 import com.peakphysique.app.view.RegisterScreen
+import com.peakphysique.app.view.SettingsScreen
 import com.peakphysique.app.view.StepCounterScreen
 import com.peakphysique.app.view.TrackingScreen
 
