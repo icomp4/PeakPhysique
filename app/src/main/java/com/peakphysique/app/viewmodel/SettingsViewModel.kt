@@ -17,9 +17,17 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     private val _goals = MutableStateFlow(repository.getGoals())
     val goals: StateFlow<Goals> = _goals.asStateFlow()
 
+    private val _displayName = MutableStateFlow(repository.getDisplayName())
+    val displayName: StateFlow<String> = _displayName.asStateFlow()
+
     fun updateDarkMode(enabled: Boolean) {
         repository.setDarkMode(enabled)
         _isDarkMode.value = enabled
+    }
+
+    fun updateDisplayName(name: String) {
+        repository.setDisplayName(name)
+        _displayName.value = name
     }
 
     fun updateGoal(

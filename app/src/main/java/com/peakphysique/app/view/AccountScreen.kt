@@ -1,5 +1,6 @@
 package com.peakphysique.app.view
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -9,14 +10,17 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.peakphysique.app.controller.BottomNavBar
 import com.peakphysique.app.viewmodel.AccountViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-
+import com.peakphysique.app.R
 
 @Composable
 fun AccountScreen(
@@ -28,6 +32,7 @@ fun AccountScreen(
     val totalWorkouts by viewModel.totalWorkouts.collectAsState()
     val recordsBroken by viewModel.recordsBroken.collectAsState()
     val monthsActive by viewModel.monthsActive.collectAsState()
+    val displayName by viewModel.displayName.collectAsState()
 
     val scrollState = rememberScrollState()
 
@@ -53,40 +58,33 @@ fun AccountScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    // Profile Picture
-                    Surface(
-                        modifier = Modifier
-                            .padding(top = 34.dp)
-                            .size(100.dp),
-                        shape = MaterialTheme.shapes.medium,
-                        tonalElevation = 1.dp
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Profile Picture",
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .size(48.dp)
-                        )
-                    }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                // Profile picture
+                Image(
+                    painter = painterResource(id = R.drawable.logo_),
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier
+                        .padding(top = 34.dp)
+                        .size(200.dp),
+                    contentScale = ContentScale.Fit
+                )
 
-                    Text(
-                        text = "John Doe",
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold
-                    )
+                Spacer(modifier = Modifier.height(16.dp))
 
-                    Text(
-                        text = "Member since: Jan 2024",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                Text(
+                    text = displayName,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
 
-                }
+                Text(
+                    text = "Member since: Jan 2024",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
+    }
 
         // Stats Section
         Card(
@@ -132,11 +130,6 @@ fun AccountScreen(
             onClick = { navController.navigate("progress_screen") }
         )
 
-        MenuListItem(
-            icon = Icons.Default.DateRange,
-            title = "Workout History",
-            onClick = onViewWorkoutHistory
-        )
 
         MenuListItem(
             icon = Icons.Default.Add,
@@ -152,17 +145,6 @@ fun AccountScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedButton(
-            onClick = onLogout,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Icon(
-                imageVector = Icons.Default.ExitToApp,
-                contentDescription = null,
-                modifier = Modifier.padding(end = 8.dp)
-            )
-            Text("Logout")
-        }
     }
     BottomNavBar(navController = navController)
 }

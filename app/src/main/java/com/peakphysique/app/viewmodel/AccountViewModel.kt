@@ -5,6 +5,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.peakphysique.app.database.AppDatabase
+import com.peakphysique.app.database.repository.SettingsRepository
 import com.peakphysique.app.model.WorkoutWithSets
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,6 +15,10 @@ import java.time.temporal.ChronoUnit
 
 class AccountViewModel(application: Application) : AndroidViewModel(application) {
     private val workoutRepository: WorkoutRepository
+    private val settingsRepository = SettingsRepository(application)
+
+    private val _displayName = MutableStateFlow(settingsRepository.getDisplayName())
+    val displayName: StateFlow<String> = _displayName.asStateFlow()
 
     private val _totalWorkouts = MutableStateFlow(0)
     val totalWorkouts: StateFlow<Int> = _totalWorkouts.asStateFlow()

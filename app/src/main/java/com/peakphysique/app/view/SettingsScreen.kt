@@ -38,6 +38,7 @@ fun SettingsScreen(
     val scrollState = rememberScrollState()
     val isDarkMode by viewModel.isDarkMode.collectAsState()
     val goals by viewModel.goals.collectAsState()
+    val displayName by viewModel.displayName.collectAsState()
 
     Column(
         modifier = modifier
@@ -52,6 +53,34 @@ fun SettingsScreen(
             modifier = Modifier.padding(vertical = 16.dp)
         )
 
+        // Profile Card
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = "Profile",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = displayName,
+                    onValueChange = { viewModel.updateDisplayName(it) },
+                    label = { Text("Display Name") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+
+        // Weight Goals Card
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -76,6 +105,7 @@ fun SettingsScreen(
             }
         }
 
+        // Strength Goals Card
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -116,6 +146,7 @@ fun SettingsScreen(
             }
         }
 
+        // Appearance Card
         Card(
             modifier = Modifier
                 .fillMaxWidth()

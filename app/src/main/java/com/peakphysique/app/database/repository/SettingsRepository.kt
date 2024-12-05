@@ -14,6 +14,14 @@ class SettingsRepository(private val context: Context) {
         sharedPreferences.edit().putBoolean("is_dark_mode", enabled).apply()
     }
 
+    fun getDisplayName(): String {
+        return sharedPreferences.getString("display_name", "User") ?: "User"
+    }
+
+    fun setDisplayName(name: String) {
+        sharedPreferences.edit().putString("display_name", name).apply()
+    }
+
     fun getGoals(): Goals {
         return Goals(
             weightGoal = sharedPreferences.getFloat("weight_goal", 0f),
