@@ -38,5 +38,7 @@ class SurveyViewModel(application: Application) : AndroidViewModel(application) 
     fun saveSurveyData() {
         repository.setDisplayName(_displayName.value)
         repository.updateGoals(_goals.value)
+        repository.setSurveyCompleted()
     }
+
 }

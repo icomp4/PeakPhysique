@@ -14,19 +14,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.peakphysique.app.controller.Navigation
 import com.peakphysique.app.ui.theme.PeakPhysiqueTheme
+import com.peakphysique.app.database.repository.SettingsRepository
 
 class MainActivity : ComponentActivity() {
-
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val settingsRepository = SettingsRepository(applicationContext)
+
+        //settingsRepository.resetSurvey() // To show survey screen again, uncomment this line
+
         enableEdgeToEdge()
         setContent {
-            PeakPhysiqueTheme() {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize().background(
-                    Color(0xFFE0E0E0)
-                )) {
-                    Navigation()
+            PeakPhysiqueTheme {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0xFFE0E0E0))
+                ) {
+                    Navigation(settingsRepository)
                 }
             }
         }

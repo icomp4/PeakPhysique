@@ -66,4 +66,20 @@ class SettingsRepository(private val context: Context) {
         }
         _goals.value = goals
     }
+    fun isSurveyCompleted(): Boolean {
+        return sharedPreferences.getBoolean(SURVEY_COMPLETED_KEY, false)
+    }
+
+    fun setSurveyCompleted() {
+        sharedPreferences.edit().putBoolean(SURVEY_COMPLETED_KEY, true).apply()
+    }
+    fun resetSurvey() {
+        sharedPreferences.edit()
+            .putBoolean(SURVEY_COMPLETED_KEY, false)
+            .apply()
+    }
+
+    companion object {
+        private const val SURVEY_COMPLETED_KEY = "survey_completed"
+    }
 }
