@@ -32,4 +32,3 @@ androidx-palette-ktx = { group = "androidx.palette", name = "palette-ktx", versi
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-

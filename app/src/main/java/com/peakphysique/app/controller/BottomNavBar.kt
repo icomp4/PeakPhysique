@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -22,13 +23,16 @@ sealed class Routes(val route: String) {
     data object History : Routes("history_screen")
     data object Feed : Routes("feed_screen")
     data object Account : Routes("account_screen")
+    data object Steps : Routes("step_screen")
 }
 
 enum class AppScreen(val route: String, val title: String, val icon: ImageVector) {
     HOME(Routes.Track.route, "Track", Icons.Filled.Home),
     HISTORY(Routes.History.route, "History", Icons.Filled.DateRange),
     FEED(Routes.Feed.route, "Feed", Icons.Filled.Share),
-    ACCOUNT(Routes.Account.route, "Account", Icons.Filled.AccountCircle)
+    ACCOUNT(Routes.Account.route, "Account", Icons.Filled.AccountCircle),
+    STEPS(Routes.Steps.route, "Steps", Icons.Filled.Info)
+
 }
 
 @Composable

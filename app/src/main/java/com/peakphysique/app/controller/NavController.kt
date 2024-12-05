@@ -1,6 +1,9 @@
 package com.peakphysique.app.controller
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -12,8 +15,10 @@ import com.peakphysique.app.view.LoginScreen
 import com.peakphysique.app.view.ProgressScreen
 import com.peakphysique.app.view.RegisterScreen
 import com.peakphysique.app.view.SettingsScreen
+import com.peakphysique.app.view.StepCounterScreen
 import com.peakphysique.app.view.TrackingScreen
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun Navigation(){
     val navController = rememberNavController()
@@ -46,6 +51,9 @@ fun Navigation(){
         }
         composable("settings_screen"){
             SettingsScreen(navController)
+        }
+        composable("step_screen"){
+            StepCounterScreen(navController)
         }
     }
 }
