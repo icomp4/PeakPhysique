@@ -12,22 +12,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.peakphysique.app.R
-
-data class FitnessGoals(
-    val name: String,
-    val goalWeight: Float,
-    val goalSquat: Float,
-    val goalBench: Float,
-    val goalDeadlift: Float
-)
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.peakphysique.app.viewmodel.SurveyViewModel
 
 @Composable
-fun FitnessSurveyScreen(navController: NavHostController) {
-    var name by remember { mutableStateOf("") }
-    var goalWeight by remember { mutableStateOf("") }
-    var goalSquat by remember { mutableStateOf("") }
-    var goalBench by remember { mutableStateOf("") }
-    var goalDeadlift by remember { mutableStateOf("") }
+fun FitnessSurveyScreen(
+    navController: NavHostController,
+    viewModel: SurveyViewModel = viewModel()
+) {
+    val displayName by viewModel.displayName.collectAsState()
+    val goals by viewModel.goals.collectAsState()
 
     Column(
         modifier = Modifier
@@ -50,16 +44,18 @@ fun FitnessSurveyScreen(navController: NavHostController) {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
+                value = displayName,
+                onValueChange = { viewModel.updateName(it) },
                 label = { Text("Name") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
 
             OutlinedTextField(
-                value = goalWeight,
-                onValueChange = { goalWeight = it },
+                value = if (goals.weightGoal > 0f) goals.weightGoal.toString() else "",
+                onValueChange = {
+                    it.toFloatOrNull()?.let { weight -> viewModel.updateGoals(weightGoal = weight) }
+                },
                 label = { Text("Goal Weight (lbs)") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth(),
@@ -67,8 +63,10 @@ fun FitnessSurveyScreen(navController: NavHostController) {
             )
 
             OutlinedTextField(
-                value = goalSquat,
-                onValueChange = { goalSquat = it },
+                value = if (goals.squatGoal > 0f) goals.squatGoal.toString() else "",
+                onValueChange = {
+                    it.toFloatOrNull()?.let { weight -> viewModel.updateGoals(squatGoal = weight) }
+                },
                 label = { Text("Goal Squat (lbs)") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth(),
@@ -76,8 +74,10 @@ fun FitnessSurveyScreen(navController: NavHostController) {
             )
 
             OutlinedTextField(
-                value = goalBench,
-                onValueChange = { goalBench = it },
+                value = if (goals.benchGoal > 0f) goals.benchGoal.toString() else "",
+                onValueChange = {
+                    it.toFloatOrNull()?.let { weight -> viewModel.updateGoals(benchGoal = weight) }
+                },
                 label = { Text("Goal Bench Press (lbs)") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth(),
@@ -85,8 +85,10 @@ fun FitnessSurveyScreen(navController: NavHostController) {
             )
 
             OutlinedTextField(
-                value = goalDeadlift,
-                onValueChange = { goalDeadlift = it },
+                value = if (goals.deadliftGoal > 0f) goals.deadliftGoal.toString() else "",
+                onValueChange = {
+                    it.toFloatOrNull()?.let { weight -> viewModel.updateGoals(deadliftGoal = weight) }
+                },
                 label = { Text("Goal Deadlift (lbs)") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth(),
@@ -97,6 +99,7 @@ fun FitnessSurveyScreen(navController: NavHostController) {
 
             Button(
                 onClick = {
+                    viewModel.saveSurveyData()
                     navController.navigate("feed_screen")
                 },
                 modifier = Modifier

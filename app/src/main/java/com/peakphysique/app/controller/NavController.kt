@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.peakphysique.app.view.AccountScreen
 import com.peakphysique.app.view.FeedScreen
+import com.peakphysique.app.view.FitnessSurveyScreen
 import com.peakphysique.app.view.HistoryScreen
 import com.peakphysique.app.view.LogWeightScreen
 import com.peakphysique.app.view.LoginScreen
@@ -22,7 +23,7 @@ import com.peakphysique.app.view.TrackingScreen
 @Composable
 fun Navigation(){
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "login_screen"){
+    NavHost(navController = navController, startDestination = "survey_screen"){
 
         composable("login_screen"){
             LoginScreen(navController)
@@ -54,6 +55,9 @@ fun Navigation(){
         }
         composable("step_screen"){
             StepCounterScreen(navController)
+        }
+        composable("survey_screen"){
+            FitnessSurveyScreen(navController)
         }
     }
 }
