@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.peakphysique.app.database.AppDatabase
 import com.peakphysique.app.database.repository.SettingsRepository
 import com.peakphysique.app.database.repository.WeightRepository
+import com.peakphysique.app.model.Goals
 import com.peakphysique.app.model.WorkoutWithSets
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,6 +38,9 @@ class ProgressViewModel(application: Application) : AndroidViewModel(application
     private val _monthlyPRs = MutableStateFlow(0)
     val monthlyPRs: StateFlow<Int> = _monthlyPRs.asStateFlow()
 
+    private val _strengthGoals = MutableStateFlow(Goals())
+    val strengthGoals: StateFlow<Goals> = _strengthGoals.asStateFlow()
+
     init {
         val database = AppDatabase.getDatabase(application)
         workoutRepository = WorkoutRepository(database.workoutDao())
@@ -51,7 +55,9 @@ class ProgressViewModel(application: Application) : AndroidViewModel(application
 
     private fun observeGoals() {
         viewModelScope.launch {
-            _goalWeight.value = settingsRepository.getGoals().weightGoal
+            val goals = settingsRepository.getGoals()
+            _goalWeight.value = goals.weightGoal
+            _strengthGoals.value = goals
         }
     }
 
