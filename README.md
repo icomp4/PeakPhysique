@@ -6,6 +6,7 @@
 - Log weight page to log your weight for the current day
 - History page to see the workouts you logged for any specified date
 - Progress page to see weight loss/gain progress as well as strength progress
+- Step counter page which utilizes the phones sensors for users to set step count goals and track their steps
 
 ## 🎨 Original Figma Design
 ![image](https://github.com/user-attachments/assets/e854ad29-b49c-49c9-a71c-748be6640d8d)
