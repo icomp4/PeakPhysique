@@ -10,6 +10,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -57,18 +58,25 @@ import kotlin.random.Random
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun StepCounterScreen(navController: NavHostController) {
-    var selectGoal by remember { mutableStateOf("Select Step Goal") }
+    val scrollState = rememberScrollState()
+    val context = LocalContext.current
+    val currentDate = remember { LocalDate.now().toString() }
+
+    var selectGoal by remember { mutableStateOf("Select New Step Goal") }
     val stepGoalOptions = listOf("1000", "3000", "5000", "7000", "10000", "20000")
     var expanded by remember { mutableStateOf(false) }
-    var progress by remember { mutableStateOf(0) }
+    var progress by remember { mutableIntStateOf(0) }
 
     var initialStepCount by remember { mutableIntStateOf(0) }
-    val currentDate = remember { LocalDate.now().toString() }
+
     val stepHistory = remember { mutableMapOf<String, Int>() }
     var stepCount by remember { mutableIntStateOf(0) }
-    var targetSteps by remember { mutableIntStateOf(7000) }
+    var targetSteps by remember { mutableIntStateOf(loadTargetSteps(context)) }
 
-    val scrollState = rememberScrollState()
+
+    // Initialize sensor manager
+    val sensorManager = context.getSystemService(SensorManager::class.java)
+    val stepSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
 
     //add dummy data for step history
     LaunchedEffect(Unit) {
@@ -79,11 +87,6 @@ fun StepCounterScreen(navController: NavHostController) {
     LaunchedEffect(targetSteps, stepCount) {
         progress = (stepCount.toFloat() / targetSteps.toFloat()).coerceAtMost(1f).toInt()
     }
-
-    // Initialize sensor manager
-    val context = LocalContext.current
-    val sensorManager = context.getSystemService(SensorManager::class.java)
-    val stepSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
 
     //Check for sensor
     if (stepSensor == null) {
@@ -108,9 +111,8 @@ fun StepCounterScreen(navController: NavHostController) {
 
                     // If the date has changed, reset step count for the new day
                     if (thisDate != currentDate) {
-                        initialStepCount =
-                            event.values[0].toInt()  // Reset initial step count for the new day
-                        stepCount = 0  // Reset the daily step count
+                        initialStepCount = event.values[0].toInt()
+                        stepCount = 0
                     }
 
                     // Calculate the steps taken since the app started, considering daily reset
@@ -145,7 +147,7 @@ fun StepCounterScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(.8f)
+            .fillMaxHeight(.85f)
             .padding(45.dp)
             .verticalScroll(state = scrollState),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -156,21 +158,31 @@ fun StepCounterScreen(navController: NavHostController) {
             fontSize = 32.sp
         )
         Text(
-            modifier = Modifier.padding(10.dp),
-            text = "${stepCount}",
+            modifier = Modifier.padding(15.dp),
+            text = "$stepCount",
             fontSize = 48.sp
         )
-        Text(text = "Goal: $targetSteps Steps", fontSize = 16.sp)
 
         CircularProgressIndicator(
             progress = {
                 (stepCount.toFloat() / targetSteps.toFloat()).coerceAtMost(1f)
             },
             modifier = Modifier
-                .padding(15.dp)
-                .size(80.dp),
-            color = MaterialTheme.colorScheme.primary,
+                .padding(10.dp)
+                .size(130.dp),
+            color = if (stepCount >= targetSteps) Color.Green else MaterialTheme.colorScheme.primary,
             strokeWidth = 8.dp,
+        )
+        // If goal is met toast congrats message
+        if (stepCount >= targetSteps) {
+            Toast.makeText(LocalContext.current, "\uD83C\uDF89 You Reached Your Goal. Great Job! \uD83C\uDF89", Toast.LENGTH_SHORT).show()
+        }
+
+        Text(
+            modifier = Modifier
+                .padding(15.dp),
+            text = "Current Goal: $targetSteps Steps",
+            fontSize = 18.sp
         )
 
         Box {
@@ -178,10 +190,11 @@ fun StepCounterScreen(navController: NavHostController) {
             Text(
                 text = selectGoal,
                 modifier = Modifier
+                    .padding(10.dp)
                     .fillMaxWidth()
                     .clickable { expanded = !expanded }
                     .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
-                    .padding(10.dp)
+
             )
             DropdownMenu(
                 expanded = expanded,
@@ -193,24 +206,26 @@ fun StepCounterScreen(navController: NavHostController) {
                             selectGoal = option
                             expanded = false
                             targetSteps = option.toInt()
+                            saveTargetSteps(context, targetSteps)
                         },
-                        text = { Text(option.toString()) }
+                        text = { Text(option) }
                     )
                 }
             }
         }
 
         Text(
-            modifier = Modifier.padding(25.dp),
+            modifier = Modifier.padding(20.dp),
             text = "Step History (Last 5 Days):",
             style = MaterialTheme.typography.titleMedium
         )
         stepHistory.forEach { (date, steps) ->
-            Text(text = "${date} : ${steps} steps")
+            Text(text = "$date : $steps steps")
         }
     }
     BottomNavBar(navController)
 }
+
 //create dummy data for stepHistory
 fun initializeStepHistory(stepHistory: MutableMap<String, Int>) {
     val currentDate = LocalDate.now()
@@ -224,7 +239,7 @@ fun initializeStepHistory(stepHistory: MutableMap<String, Int>) {
     }
 }
 
-
+// Check if permission is already granted
 @RequiresApi(Build.VERSION_CODES.Q)
 fun hasActivityRecognitionPermission(context: Context): Boolean {
     return ContextCompat.checkSelfPermission(
@@ -247,6 +262,19 @@ fun requestActivityRecognitionPermission(activity: Activity) {
             arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
             100
         )
+    }
+}
+
+// Persist Step Goal save and load
+fun loadTargetSteps(context: Context): Int {
+    val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+    return sharedPreferences.getInt("target_steps", 7000) // Default to 7000 if no value exists
+}
+fun saveTargetSteps(context: Context, targetSteps: Int) {
+    val sharedPreferences = context.getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+    with(sharedPreferences.edit()) {
+        putInt("target_steps", targetSteps)
+        apply()
     }
 }
 
